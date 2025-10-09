@@ -1,0 +1,136 @@
+body {
+  font-family: 'Source Code Pro', Consolas, monospace;
+  background: #0b0f12;
+  color: #c7f9cc;
+  margin: 0;
+  padding: 0;
+}
+/* Prevent overflow and ensure consistent box model */
+*, *::before, *::after { box-sizing: border-box }
+
+.container { max-width: 980px; margin: 0 auto; padding: 1rem; overflow: hidden }
+/* Navbar */
+nav {
+  background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(10,10,10,0.9));
+  border-bottom: 1px solid #082018;
+  padding: 0.75rem 1rem;
+}
+nav a { color: #8fffc1; text-decoration: none }
+
+.container { max-width: 980px; margin: 0 auto; padding: 1rem }
+
+/* Form elements */
+form { margin: 1.25rem 0 }
+/* Form controls: make them full-width inside cards/forms */
+input, textarea, select {
+  background: #071014; color: #c7f9cc; border: 1px solid #08302a; padding: 0.75rem; border-radius: 4px; font-family: inherit; font-size: 0.98rem; width: 100%; box-sizing: border-box;
+}
+button { background: linear-gradient(90deg,#0ac99a,#08946f); color: #04110a; border: none; padding: 0.6rem 0.9rem; border-radius: 4px; cursor: pointer }
+
+.muted { color: #739a86 }
+.neon { color: #7fffd4 }
+
+/* Cards / posts */
+.card { background: linear-gradient(180deg,#07101455,#071014); border: 1px solid #08302a; padding: 0.9rem; border-radius: 6px; margin-bottom: 0.75rem }
+.card { padding: 1.25rem; }
+.card h3 { margin: 0 0 0.25rem 0 }
+
+/* Wider horizontal content layout for publications */
+.content-layout { display:flex; gap:1.25rem; align-items:flex-start }
+.content-list { width: 30%; max-width: 360px }
+.content-main { flex: 1 1 auto; min-width: 420px }
+.post-card-large { padding: 1.25rem; border-radius: 8px; font-size: 1.05rem; line-height: 1.6 }
+.post-title { font-size: 1.6rem; margin: 0 0 0.5rem 0; white-space: normal; word-break: normal; overflow-wrap: normal }
+
+/* Header image styling: keep small, crop nicely and preserve aspect ratio */
+.thumb { width: 72px; height: 56px; overflow: hidden; border-radius: 6px; flex-shrink: 0 }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
+
+/* Post/header detail image larger */
+.post-header-image { width: 120px; height: 84px; overflow: hidden; border-radius: 6px; flex-shrink: 0 }
+.post-header-image img { width: 100%; height: 100%; object-fit: cover; display: block }
+
+/* Placeholder for missing images */
+.img-placeholder { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg,#041111,#061414); color: #6fe9c0; font-weight:700; }
+.img-placeholder .glyph { font-family: 'Source Code Pro', monospace; font-size: 18px; }
+
+/* tooltip */
+.img-tooltip { position: relative; display: inline-block }
+.img-tooltip .img-tooltiptext { visibility: hidden; width: 110px; background-color: #02221b; color: #bff7dd; text-align: center; border-radius: 4px; padding: 6px 8px; position: absolute; z-index: 10; bottom: 110%; left: 50%; transform: translateX(-50%); box-shadow: 0 2px 6px rgba(0,0,0,0.6); font-size: 12px }
+.img-tooltip:hover .img-tooltiptext { visibility: visible }
+
+/* Ensure titles render horizontally and don't get rotated or split */
+.post-title, .card h3 {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  display: block;
+  white-space: pre-line;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+/* Defensive: ensure selected items and titles don't render vertically */
+.selected { writing-mode: horizontal-tb !important; transform: none !important; display: block }
+.post-title, .content-list .card h3 { white-space: normal; word-wrap: break-word }
+.post-body { font-size: 1.05rem; color: #e7ffee }
+.content-list .card { background: linear-gradient(180deg,#061414,#071014); padding: 0.7rem }
+.content-list .card h3 { font-size: 1.05rem }
+
+/* Visual: selected card highlight should cover the right area (not thumbnail) */
+.content-list .card.selected { border-color: #4fbfda; box-shadow: 0 0 0 2px rgba(79,191,218,0.04) inset }
+.content-list .card.selected h3 { color: #a6fff0 }
+
+/* Ensure buttons near inputs don't overlap */
+.card button { display: inline-block; margin-top: 0.5rem }
+.login-card input, .register-card input { max-width: 480px }
+
+/* Prevent long words or media from overflowing */
+img, video, iframe { max-width: 100%; height: auto; display: block }
+.post-body, .card p, .card div { word-break: normal; overflow-wrap: anywhere }
+
+/* Ensure the main layout stretches so columns don't collapse */
+.content-layout { align-items: stretch }
+
+/* Make inner cards (posts) use full width of their container */
+.post-card-large .card { width: 100% }
+.post-card-large article.card { width: 100% }
+.content-main { overflow: hidden }
+
+/* Paragraph and numbering spacing */
+.post-paragraph { margin-bottom: 1rem }
+.post-paragraph div { margin: 0.25rem 0 }
+.numbered-line { margin-left: 2.5rem; text-indent: -1.5rem }
+
+/* Indented lines (preserve left margin) */
+.indented-line { padding-left: 3.5rem; white-space: pre-wrap }
+
+/* Ensure vertical growth and respect left line */
+.content-main, .card { overflow: visible }
+.post-body { white-space: pre-wrap }
+
+
+@media (max-width: 900px) {
+  .content-layout { flex-direction: column }
+  .content-list { width: 100%; max-width: none }
+}
+
+/* Mobile adjustments */
+@media (max-width: 700px) {
+  .thumb { width: 56px; height: 44px }
+  .post-header-image { width: 96px; height: 64px }
+  .post-card-large { padding: 0.9rem }
+  .content-main { min-width: 0 }
+  .container { padding: 0.75rem }
+  nav .container { flex-direction: column; gap: 0.5rem }
+  nav a, nav button { display: inline-block }
+  input, textarea { font-size: 0.95rem }
+  button { width: auto }
+  .card { padding: 0.75rem }
+  .img-tooltip .img-tooltiptext { bottom: 120%; left: 50% }
+}
+
+/* Layout helpers */
+.row { display:flex; gap:1rem }
+.col { flex:1 }
+
+@media (max-width: 700px) { .row { flex-direction: column } }
+@media (max-width: 700px) { .row { flex-direction: column } }
