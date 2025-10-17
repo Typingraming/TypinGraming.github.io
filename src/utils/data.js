@@ -4,6 +4,8 @@ const KEY = 'threads_v1';
 
 // Generated master key for owner provisioning. Change this value if you want a different master key.
 export const DEFAULT_MASTER_KEY = 'MASTER-5G7K9Z2H';
+// Public key, reusable and without expiry - pre-established default
+export const DEFAULT_PUBLIC_KEY = 'PUBLIC-ALWAYS-OPEN-2025';
 
 export const loadThreads = () => {
   const raw = load(KEY, []);
@@ -53,10 +55,12 @@ export const deleteThread = (threadId) => {
 // --- key management ---
 const KEY_STORE = 'access_keys_v1';
 
-export const loadKeys = () => load(KEY_STORE, [
-  // default master key (change in production) - single-use owner key
-  { key: DEFAULT_MASTER_KEY, role: 'owner', daysValid: null, singleUse: true, used: false, createdAt: Date.now() }
-]);
+export const loadKeys = () =>
+  // Do not automatically seed a master key as the fallback. Returning an
+  // empty array prevents newly opened browsers/devices from seeing a
+  // pre-seeded unused master key. The app bootstrap code should explicitly
+  // create or mark the master key in the key store when needed.
+  load(KEY_STORE, []);
 
 export const saveKeys = (keys) => save(KEY_STORE, keys);
 

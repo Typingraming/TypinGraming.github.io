@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { load, save } from '../utils/storage';
-import { validateAndUseKey, createAccessKey, loadKeys, saveKeys, DEFAULT_MASTER_KEY } from '../utils/data';
+import { validateAndUseKey, createAccessKey, loadKeys, saveKeys, DEFAULT_MASTER_KEY, DEFAULT_PUBLIC_KEY } from '../utils/data';
 
 const AuthContext = createContext(null);
 
@@ -24,22 +24,49 @@ export const AuthProvider = ({ children }) => {
       }
 
       if ((!existing || existing.length === 0) && DEFAULT_MASTER_KEY) {
-  const admin = { id: Date.now(), username: 'Typing', password: 'ReyDrakongsVill1646', displayName: 'TypinGramingPage</>', bio: 'Owner', avatarColor: '#000000', keyRole: 'owner', keyExpiresAt: null, accessKeyUsed: DEFAULT_MASTER_KEY };
+        const admin = { id: Date.now(), username: 'Typing', password: 'ReyDrakongsVill1646', displayName: 'TypinGramingPage</>', bio: 'Owner', avatarColor: '#000000', keyRole: 'owner', keyExpiresAt: null, accessKeyUsed: DEFAULT_MASTER_KEY };
         setUsers([admin]);
         setCurrentUser(admin);
-        // mark master key as used in key store
+        // Ensure the master key is present in the key store and marked used.
         try {
-          const keys = loadKeys();
-          const updated = keys.map(k => k.key === DEFAULT_MASTER_KEY ? { ...k, used: true } : k);
-          saveKeys(updated);
+          let keys = loadKeys() || [];
+          // If the master key is missing, add it and mark used.
+          const hasMaster = keys.find(k => k.key === DEFAULT_MASTER_KEY);
+          if (!hasMaster) {
+            keys = [{ key: DEFAULT_MASTER_KEY, role: 'owner', daysValid: null, singleUse: true, used: true, createdAt: Date.now() }, ...keys];
+          } else {
+            keys = keys.map(k => k.key === DEFAULT_MASTER_KEY ? { ...k, used: true } : k);
+          }
+          // Ensure the default public key exists and is reusable without expiry.
+          const hasPublic = keys.find(k => k.key === DEFAULT_PUBLIC_KEY);
+          if (!hasPublic) {
+            keys = [{ key: DEFAULT_PUBLIC_KEY, role: 'public', daysValid: null, singleUse: false, used: false, createdAt: Date.now() }, ...keys];
+          }
+          saveKeys(keys);
         } catch (e) {
-          console.error('Error marking master key used', e);
+          console.error('Error ensuring master key in store', e);
         }
       }
   // previously we cleared threads_v1 here; keep existing threads to avoid data loss
     } catch (e) {
       console.error('bootstrap admin error', e);
     }
+  }, []);
+
+  // Keep users and currentUser in sync across tabs/windows using the storage event.
+  useEffect(() => {
+    const onStorage = (ev) => {
+      if (ev.key === 'users') {
+        try { setUsers(load('users', [])); } catch (e) { console.error(e); }
+      }
+      if (ev.key === 'currentUser') {
+        try { setCurrentUser(load('currentUser', null)); } catch (e) { console.error(e); }
+      }
+      // If keys changed in another tab, nothing to do here by default. Components
+      // call loadKeys/isKeyAvailable when needed. But we could add notifications.
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   useEffect(() => save('users', users), [users]);
